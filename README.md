@@ -1,156 +1,145 @@
-# C(13,6,3): the lower bound, strengthened
+# C(13,6,3): exact structural close program
 
-Author: Jared Wilder. First public timestamp: 2026-09-11.
+Author: Jared Wilder. First public timestamp: 2026-09-11. Latest structural court: 2026-09-14.
 
-`C(13,6,3)` is the least number of 6-element blocks from a 13-point set such that every one of the
-286 triples lies in some block. It is known to satisfy `20 <= C(13,6,3) <= 21`, and whether 20 is
-achievable is open.
+`C(13,6,3)` is the least number of 6-element blocks on 13 points that cover every triple. The current bound is
 
-**This did not close it.** What it did is strengthen the structural bound enough that the remaining
-search space is small and sharply described, and measure exactly why more solver time will not
-finish the job.
-
----
-
-## The strengthening
-
-The structural fact previously on record was **every point of a hypothetical 20-block cover has
-degree at least 8**, resting on `C(12,5,2) >= 8`, the Schönheim bound.
-
-**`C(12,5,2) = 9`, proved here by exhaustive search** — 98,147,285 nodes, 289 seconds, infeasible at
-8 and feasible at 9. That raises the point-degree floor to 9, and the consequences are large:
-
-```
-sum of point degrees = 6 * 20 = 120
-
-with degree >= 8    13 * 8 = 104     slack 16
-with degree >= 9    13 * 9 = 117     slack  3
+```text
+20 <= C(13,6,3) <= 21
 ```
 
-**The slack collapses from 16 to 3.** Two things follow immediately.
+and the exact value remains open. This repository records the mathematics extracted by the close campaign: exact local covering values, degree/pair constraints, optimal-link structure, route obstructions, and the current rooted Pattern-A reduction. A route that does not close the parent is retained when it creates a theorem, a falsifier, an obstruction, or a sharper search coordinate.
 
-**The lower bound re-derives itself.** `6b >= 13 * 9 = 117` gives `b >= 19.5`, hence
-**`C(13,6,3) >= 20`** without appealing to anything else.
+## Current frontier — rooted Pattern A
 
-**The degree multiset is pinned to three possibilities.** Three units of excess over thirteen points
-leaves only:
+The latest forensic/KBK pass is here:
 
-```
-(12, 9^12)          12 points of degree exactly 9
-(11, 10, 9^11)      11 points of degree exactly 9
-(10, 10, 10, 9^10)  10 points of degree exactly 9
-```
+- [`research/2026-09-14-rooted-pattern-A-kbk.md`](research/2026-09-14-rooted-pattern-A-kbk.md)
 
-So **at least ten points have degree exactly 9** in any 20-block cover.
+The key new coordinate is this. In Pattern A the unique high point `h` has degree 12 and every other point has degree 9 with `r_hy=5`. Hence the link at every ordinary point is an optimal 9-block `C(12,5,2)` cover rooted at a degree-5 point.
 
-Alongside it, a pair-degree floor: every pair lies in at least `C(11,4,1) = 3` blocks, since a pair
-inside a 6-block accounts for only 4 of the other 11 points.
+The supplied optimal-link catalogue contains 107 pairwise nonisomorphic covers: 54 max-degree-5 classes and 53 max-degree-4 classes. Pattern A can use only the 54 max-degree-5 classes. Rooting those at degree-5 point orbits gives 56 rooted types, and a first exact residual court eliminates 2 of them.
 
-**Both bounds are tight, so neither cut excludes anything real.** All four verified 21-covers found
-here have minimum degree exactly 9 and minimum pair-degree exactly 3.
+Let the eight blocks avoiding `h` be indexed by `[8]`. Each ordinary point `y` lies in exactly four of them, giving a 4-set `S_y subset [8]`. For ordinary points `y,z`,
 
-## Why the counting bound could not have done this
-
-```
-trivial bound   ceil(286 / 20) = 15
-Schönheim       C(13,6,3) >= 18,   C(12,5,2) >= 8
-exhaustive      C(12,5,2)  =  9
+```text
+a_yz = r_yz - lambda_hyz = |S_y intersect S_z|.
 ```
 
-The Schönheim bound gives 8 where the truth is 9. **The exhaustive searcher decides a value the
-counting bound cannot**, and that one unit is the whole strengthening.
+The rooted catalogue gives `a_yz <= 3`, so the twelve `S_y` are distinct. Therefore the Pattern-A residual is exactly a
 
-The same point shows up in calibration: `C(10,4,2) = 9` while Schönheim gives only 8 there, and the
-searcher settles it both ways.
+> **simple 4-uniform, 6-regular hypergraph on 8 vertices with 12 edges.**
 
----
+This dual formulation replaces the older 12-point generation from 924 candidate 6-blocks. It also yields immediate KBK: an `S_y` has only one disjoint 4-set, its complement, so any rooted type demanding two zero-intersection neighbours is impossible.
 
-## Calibration, both directions
+The next exact attack is rooted two-anchor compatibility in this 8-vertex Johnson geometry.
 
-Every value below was proved infeasible at `b-1` and feasible at `b` by a dedicated exhaustive
-bitmask search, before anything was trusted at 20.
+## Important correction from the catalogue audit
 
-| value | at b−1 | at b |
-|---|---|---|
-| C(7,3,2) = 7 | infeasible | feasible, 25 nodes |
-| C(8,3,2) = 11 | infeasible | feasible, 40 |
-| C(9,3,2) = 12 | infeasible | feasible, 146 |
-| **C(10,4,2) = 9** | infeasible, 2,440 nodes | feasible, 34,879 |
-| C(11,5,2) = 7 | infeasible | feasible, 50,976 |
-| **C(12,5,2) = 9** | **infeasible, 98,147,285 nodes, 289 s** | feasible, 8,894,174 |
-| C(13,4,2) = 13 | infeasible | feasible, 532 |
-| C(8,4,3) = 14 | infeasible | feasible, 56/56 verified |
-| **C(9,4,3) = 25** | infeasible | feasible, 84/84 verified |
-| C(10,4,3) = 30 | infeasible | feasible |
-| C(13,6,3) <= 21 | — | **286/286 verified** |
+An intermediate campaign statement claimed every pair multiplicity in every optimal link was at most 4. Direct audit of the supplied 107-link catalogue finds three classes with pair multiplicity 5, so that blanket statement is retracted.
 
-Isomorphism machinery was validated separately: the Fano plane, STS(9) and PG(2,3) each return
-exactly one class.
+The actual completion/signature code retained the multiplicity-5 bin; the defect was theorem bookkeeping, not a silent exclusion from those models. The corrected Pattern-A-specific residual statement `a_yz<=3` is stronger for the live route and is recorded in the rooted KBK note.
 
----
+## The structural strengthening
 
-## What was run at 20, and what it returned
+The local covering value
 
-**An exhaustive six-case split with the degree vector fully pinned** — relabelling only, no
-prescribed group, so all six returning infeasible would have closed the problem. All six returned
-**unknown at 5,400 seconds each**, roughly 36 CPU-hours:
-
-```
-branches    5.3M   48.6M   43.4M   95.1M   38.7M   37.4M
-conflicts   292k    166k    158k    352k    1.50M   1.46M
+```text
+C(12,5,2) = 9
 ```
 
-**Prescribed-symmetry search over 23 groups: zero covers found**, and **13 groups proved to admit no
-invariant 20-cover** — including one of order 2,520. That is non-existence *under those symmetries*
-and never non-existence, which is how it is recorded.
+was established by exhaustive search. This raises every point degree in a hypothetical 20-block `C(13,6,3)` cover to at least 9. Since the total point-degree sum is
 
-**Local search, seven independent runs: best 284 of 286 triples, two uncovered, never zero.** The
-same code finds a 21-cover in about a second, and at known-optimum-minus-one it stalls at 1, 1 and 4
-uncovered on three other designs. Suggestive of infeasibility. Not evidence.
-
-## The measured bottleneck
-
-**The linear relaxation is worthless here.** Its fractional optimum is about `286/20 = 14.3` against
-an integer target of 20, so no bound-based pruning is available at all and the entire burden falls on
-combinatorial search.
-
-The signature in the pinned cases says the rest plainly: roughly `10^7` to `10^8` branches against
-only `10^5` to `10^6` conflicts, about **one learned clause per 30 to 300 branches**. One case burned
-95.1 million branches for 352 thousand conflicts.
-
-**More solver time will not close this.**
-
-## The step that would
-
-Every 20-cover has at least ten points of degree exactly 9, and the link of such a point is an
-**optimal (12,5,2) covering**. Enumerating those links up to isomorphism reduces the problem to an
-11-block completion inside 12 points — 924 candidates at depth 11 rather than depth 20.
-
-The isomorph-rejection machinery for this was built and validated. The link enumeration itself
-exceeded `3.7 x 10^8` nodes without finishing, because it needs **canonical augmentation**, rejecting
-isomorphs *during* generation rather than after. That, not a larger solver, is what would settle it.
-
-## Also incomplete
-
-A belt-and-braces re-check of `C(12,5,2) >= 9` without the level-2 relabelling restriction reached
-`3.76 x 10^9` nodes in 7,892 seconds without completing. The restriction it removes was validated
-independently on five designs, so the value stands — but **that particular run did not finish**, and
-it is recorded as unfinished rather than as a confirmation.
-
-## Bounds after this work
-
-```
-20 <= C(13,6,3) <= 21        unchanged
+```text
+6 * 20 = 120,
 ```
 
-## Verification
+only three degree multisets are possible:
 
-```bash
-python verify.py
+```text
+(12, 9^12)
+(11, 10, 9^11)
+(10, 10, 10, 9^10)
 ```
 
-Standard library only. Recomputes the degree arithmetic, the three admissible degree multisets, the
-pair-degree floor, and the gap between the Schönheim bound and the exhaustive value.
+Thus at least ten points have degree exactly 9. Every pair lies in at least 3 blocks.
+
+The same arithmetic re-derives `C(13,6,3)>=20` from `13*9<=6b`.
+
+## Optimal-link catalogue state
+
+The supplied 107 classes have degree-profile split
+
+```text
+53 : 4^9 3^3
+46 : 5 4^7 3^4
+ 6 : 5^2 4^5 3^5
+ 2 : 5^3 4^3 3^6
+```
+
+Independent incidence-graph checking confirms the 107 supplied objects are valid and mutually nonisomorphic. Conditional on catalogue completeness, their automorphism-weighted labelled mass is
+
+```text
+max-degree-4 family :  7,384,608,000
+max-degree-5 family :  6,147,187,200
+all 107 classes      : 13,531,795,200
+```
+
+**Completeness of the 107-class catalogue remains a separate authority debt** and should be independently replayed before a catalogue-dependent global UNSAT is promoted to a proof.
+
+## Earlier exact computation and calibration
+
+The bitmask search infrastructure was calibrated in both directions on multiple covering numbers. Selected exact values include:
+
+| value | result |
+|---|---|
+| `C(7,3,2)` | 7 |
+| `C(8,3,2)` | 11 |
+| `C(9,3,2)` | 12 |
+| `C(10,4,2)` | 9 |
+| `C(11,5,2)` | 7 |
+| **`C(12,5,2)`** | **9** |
+| `C(13,4,2)` | 13 |
+| `C(8,4,3)` | 14 |
+| `C(9,4,3)` | 25 |
+| `C(10,4,3)` | 30 |
+| `C(13,6,3)` | verified 21-block upper-bound witnesses |
+
+The original `C(12,5,2)>=9` exhaustive run used 98,147,285 nodes and 289 seconds; the feasible side was also explicitly witnessed. A separate unrestricted belt-and-braces run did not terminate and is recorded only as an unfinished cross-check, not as additional proof.
+
+## What the large global searches taught us
+
+Six degree-pinned 20-cover solver branches all reached timeout/UNKNOWN rather than SAT or UNSAT. Prescribed-symmetry searches proved nonexistence only under the tested symmetry groups. Local search repeatedly reached 284/286 triples but never 286/286. None of those outcomes is promoted to global nonexistence.
+
+Their value is diagnostic: the raw global model has weak relaxation and enormous branching. The campaign therefore moved from global solving to local-link classification, then from raw residual generation to the rooted 8-vertex dual coordinate above.
+
+The post-transcript residual-generation receipt itself reached class counts
+
+```text
+1, 7, 55, 1098, 22718, 243059
+```
+
+through levels 1--6, confirming that continuing that old canonical-generation route would spend computation on the wrong coordinate. That explosion is KBK: it motivates the dual reduction rather than more wall-clock time.
+
+## Existing structural packet
+
+Earlier sources and exact scripts remain under:
+
+- [`CURRENT-STRUCTURAL-PACKET-2026-09-13.md`](CURRENT-STRUCTURAL-PACKET-2026-09-13.md)
+- [`LOCAL-LINK-DEGREE-8-9-ELIMINATION.md`](LOCAL-LINK-DEGREE-8-9-ELIMINATION.md)
+- [`research/current-structural-packet/`](research/current-structural-packet/)
+
+## Verification philosophy
+
+Every status is typed:
+
+- exact proof / arithmetic identity;
+- independently replayed finite computation;
+- catalogue-dependent consequence;
+- solver UNKNOWN / diagnostic only;
+- retracted statement.
+
+A parent problem remaining open does not erase the theorems produced by the campaign, and a killed route is retained when it sharpens the next exact attack.
 
 ## License
 

@@ -1,130 +1,137 @@
-# C(13,6,3): exact structural close program
+# `C(13,6,3)` — structure of a hypothetical 20-cover
 
-Author: Jared Wilder. First public timestamp: 2026-09-11. Latest structural court: 2026-09-14.
+`C(13,6,3)` is the minimum number of 6-subsets of a 13-point set needed to cover every triple. The current interval is
 
-`C(13,6,3)` is the least number of 6-element blocks on 13 points that cover every triple. The current bound is
+\[
+\boxed{20\le C(13,6,3)\le21}.
+\]
+
+This repository reduces the unresolved 20-block case to three degree patterns and gives a complete elimination of the first one.
+
+## Degree-pattern reduction
+
+The local covering value
+
+\[
+C(12,5,2)=9
+\]
+
+forces every point of a hypothetical 20-block cover to have degree at least 9. Since the total degree sum is `20×6=120`, only three point-degree multisets are possible:
 
 ```text
-20 <= C(13,6,3) <= 21
+A: (12,9^12)
+B: (11,10,9^11)
+C: (10,10,10,9^10)
 ```
 
-The exact close program is now reduced to the three forced degree patterns of a hypothetical 20-cover. Pattern A has undergone a complete residual/gluing court; Patterns B and C now have exact marked-link coordinates ready for the next finite attack. The repository retains every theorem, correction, obstruction and coordinate change generated on the way.
+Every pair must occur in at least three blocks.
 
-## Current frontier
+At a degree-9 point, its link is an optimal 9-block `C(12,5,2)` cover. If `#(r=j)` counts link vertices of degree `j`, then
 
-The live 2026-09-14 layer is:
+\[
+\#(r=3)=\#(r=5)+3,
+\qquad
+\#(r=5)\le4.
+\]
 
-- [`research/2026-09-14-pattern-A-elimination.md`](research/2026-09-14-pattern-A-elimination.md) — exhaustive Pattern-A residual/gluing court
-- [`research/pattern-A-elimination/`](research/pattern-A-elimination/) — executable classifier, 22 representatives, catalogue-free gluing verifier and kill receipt
-- [`research/2026-09-14-patterns-B-C-coordinate.md`](research/2026-09-14-patterns-B-C-coordinate.md) — exact coordinates for the only two remaining degree patterns
-- [`research/2026-09-14-rooted-pattern-A-kbk.md`](research/2026-09-14-rooted-pattern-A-kbk.md) — forensic link-catalogue audit and rooted reduction
+## Pattern A eliminated
 
-### Pattern A: `(12,9^12)`
+Let `h` be the degree-12 point. The eight blocks avoiding `h` induce a 4-uniform, 6-regular residual object on eight dual vertices.
 
-Let `h` be the degree-12 point. The eight blocks avoiding `h` give every ordinary point a 4-subset of `[8]`. The corrected rooted local geometry reduces the residual to a 4-uniform, 6-regular object on eight dual vertices.
-
-The new C++ classifier exhaustively finds
+An exhaustive C++ classification gives
 
 ```text
 3,268,358 search nodes
-6,084 labeled locally admissible residuals
+6,084 labelled locally admissible residuals
 22 residual isomorphism classes
 ```
 
-and the independent direct local-completion court kills all
+A separate local-completion verifier then eliminates all
 
 ```text
 22 / 22
 ```
 
-by pairwise star-gluing contradiction. The gluing verifier does not select local completions from the 107-link catalogue: once a residual is fixed, it directly enumerates the five `h`-containing blocks needed at every ordinary point.
+classes by star-gluing contradiction. The verifier constructs the five `h`-containing blocks required at each ordinary point directly from the residual rather than selecting them from the historical link catalogue.
 
-The remaining authority-hardening item for this pattern is a second solver-independent verifier for the duplicate-dual-edge prohibition. The normalized duplicate case already reduces to five exact degree-placement cases, all MILP-UNSAT. The close program treats this as a redundancy/certificate task, not a return to global SAT.
+See:
 
-### Pattern B: `(11,10,9^11)`
+- [`research/2026-09-14-pattern-A-elimination.md`](research/2026-09-14-pattern-A-elimination.md)
+- [`research/pattern-A-elimination/`](research/pattern-A-elimination/)
 
-Writing `H` for the degree-11 point, `J` for the degree-10 point and `x=r_HJ`, elementary triple-coverage arithmetic now gives
+## Pattern B
+
+Let `H` have degree 11, `J` degree 10, and set `x=r_{HJ}`. Triple-coverage arithmetic gives
+
+\[
+3\le x\le9.
+\]
+
+The 20 blocks split as
 
 ```text
-3 <= x <= 9.
+contain H,J   : x
+H only        : 11-x
+J only        : 10-x
+neither       : x-1
 ```
 
-The 20 blocks split exactly into
-
-```text
-HJ        : x
-H only    : 11-x
-J only    : 10-x
-neither   : x-1.
-```
-
-For every ordinary degree-9 point `y`, the marked optimal link supplies
+For each ordinary degree-9 point `y`, define
 
 ```text
 a_y = r_yH
 b_y = r_yJ
-c_y = lambda_yHJ
+c_y = λ_yHJ.
 ```
 
-with exact global conservation laws
+Then
 
-```text
-sum a_y = 55-x
-sum b_y = 50-x
-sum c_y = 4x.
-```
+\[
+\sum a_y=55-x,
+\qquad
+\sum b_y=50-x,
+\qquad
+\sum c_y=4x.
+\]
 
-This is the next finite skeleton. The intended attack is marked-link enumeration followed by the same direct star-gluing court that eliminated A.
+These equations are the finite coordinate system for the remaining Pattern-B search.
 
-### Pattern C: `(10,10,10,9^10)`
+## Pattern C
 
-Let the three high points be `A,B,C`, with pair multiplicities `x,y,z` and triple multiplicity `t`. Every high-high pair satisfies
+Let the three degree-10 points be `A,B,C`, with pair multiplicities `x,y,z`, triple multiplicity `t`, and `S=x+y+z`.
 
-```text
-3 <= x,y,z <= 9.
-```
+For the counts `n_j` of blocks containing exactly `j` of the three high-degree points,
 
-If `S=x+y+z` and `n_j` counts blocks containing exactly `j` high points, then
+\[
+n_3=t,
+\]
+\[
+n_2=S-3t,
+\]
+\[
+n_1=30-2S+3t,
+\]
+\[
+n_0=S-t-10.
+\]
 
-```text
-n3 = t
-n2 = S-3t
-n1 = 30-2S+3t
-n0 = S-t-10.
-```
+Hence
 
-Thus `S>=3t`, `S>=t+10`, `2S<=30+3t`, and `t>=1` are exact first gates.
+\[
+S\ge3t,
+\qquad
+S\ge t+10,
+\qquad
+2S\le30+3t,
+\qquad
+t\ge1.
+\]
 
-Every ordinary point has an optimal link with three marked high vertices. Seven conservation equations couple their local marked degrees, pair multiplicities and triple multiplicity. This is now the correct finite skeleton for Pattern C.
+The ordinary degree-9 links supply additional conservation equations coupling their marked high vertices.
 
-## Structural foundation
+## Optimal-link catalogue
 
-The local covering value
-
-```text
-C(12,5,2) = 9
-```
-
-was established by exhaustive search. Therefore every point of a hypothetical 20-block cover has degree at least 9. Since the total point-degree sum is `120`, only
-
-```text
-(12,9^12)
-(11,10,9^11)
-(10,10,10,9^10)
-```
-
-are possible. Every pair lies in at least three blocks.
-
-At every degree-9 point its link is an optimal 9-block `C(12,5,2)` covering. The exact row identity is
-
-```text
-#(r=3) = #(r=5) + 3,
-#(r=5) <= 4.
-```
-
-## Optimal-link catalogue and correction
-
-The campaign supplied 107 pairwise nonisomorphic optimal links:
+The historical computation produced 107 pairwise nonisomorphic optimal `C(12,5,2)` links, distributed by point-degree profile as
 
 ```text
 53 : 4^9 3^3
@@ -133,33 +140,12 @@ The campaign supplied 107 pairwise nonisomorphic optimal links:
  2 : 5^3 4^3 3^6
 ```
 
-Independent incidence-graph checks confirm the supplied 107 objects are valid and mutually nonisomorphic. Conditional on completeness their labelled mass is `13,531,795,200`.
+Independent incidence-graph checks confirm that the supplied 107 objects are valid and mutually nonisomorphic. A previously stated pair-multiplicity-at-most-4 property is false for three of these links; the computational data itself retained the multiplicity-5 cases.
 
-An intermediate campaign statement claiming every pair multiplicity in every optimal link was at most 4 was false: three supplied classes have pair multiplicity 5. That statement is retracted. The actual solver/signature code retained the multiplicity-5 bin, so the defect was theorem bookkeeping rather than a hidden exclusion.
+## Remaining problem
 
-Catalogue completeness remains an authority debt wherever a result depends on completeness. The current Pattern-A gluing verifier was deliberately made first-principles after the residual classification to reduce that dependency.
+Pattern A is eliminated. Patterns B and C remain. Resolving both, together with the known 21-block construction, would determine `C(13,6,3)` exactly.
 
-## Earlier computation and route KBK
+Global solver timeouts, symmetry-restricted searches, and local near-covers are not used as evidence for nonexistence.
 
-Large global 20-cover solver branches timed out/returned UNKNOWN. Prescribed-symmetry searches proved only symmetry-restricted nonexistence. Local search reached 284/286 triples but not 286/286. None is global evidence.
-
-The old Pattern-A 12-point residual generator grew through
-
-```text
-1, 7, 55, 1098, 22718, 243059
-```
-
-classes at levels 1--6. That explosion was not discarded: it supplied the KBK that led to the 8-vertex dual coordinate and the eventual 22-class court.
-
-## Terminal standard
-
-There are only two acceptable terminal outcomes:
-
-- an explicit independently verified 20-cover, proving `C(13,6,3)=20`; or
-- exhaustive elimination of Patterns A, B and C together with an independently verified 21-cover, proving `C(13,6,3)=21`.
-
-No timeout, local optimum, symmetry-restricted UNSAT, incomplete catalogue, or weaker structural theorem substitutes for that terminal bit.
-
-## License
-
-Apache-2.0.
+Author: Jared Wilder. License: Apache-2.0.

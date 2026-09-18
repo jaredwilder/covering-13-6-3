@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite it."
+title: "C(13,6,3): structure of a hypothetical 20-cover"
+authors:
+  - family-names: "Wilder"
+    given-names: "Jared"
+type: software
+repository-code: "https://github.com/jaredwilder/covering-13-6-3"
+license: Apache-2.0
